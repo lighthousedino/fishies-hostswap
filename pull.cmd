@@ -1,8 +1,11 @@
 @echo off
 cd /d "%~dp0"
 
-for /f "tokens=1,* delims==" %%A in ('findstr /R "^export " config.env') do (
-    set "%%A=%%B"
+for /f "usebackq tokens=1,* delims==" %%A in ("config.env") do (
+    echo %%A | findstr /r "^\s*#">nul
+    if errorlevel 1 (
+        set "%%A=%%B"
+    )
 )
 
 restic restore latest --target .. --overwrite if-changed ^
